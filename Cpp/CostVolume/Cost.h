@@ -15,14 +15,14 @@
 // The cost volume doesn't support updating by a different camera than the one that took the
 // keyframe, because that would violate a bunch of assumptions for DTAM
 #define COST_H_DEFAULT_NEAR .01
-
+#define COST_CPP_DATA_MIN .1
 
 class Cost{
 public:
     cv::Mat rayHits;// number of times a ray has been hit(not implemented)
     cv::Mat_<cv::Vec3f> baseImage;
-    cv::Mat lo;
-    cv::Mat hi;
+    cv::Mat_<float> lo;
+    cv::Mat_<float> hi;
     const int rows;
     int cols;
     int layers;
@@ -30,8 +30,8 @@ public:
     float depthStep;
     cv::Matx33d cameraMatrix;
     cv::Matx44d pose;//the affine transform representing the world -> camera frame transformation
-    float* data;// stores the [rows][cols][layers] array of sum of costs so far
-    float* hit;//stores the number of times each cell has been hit by a ray
+    cv::Mat_<float> data;// stores the [rows][cols][layers] array of sum of costs so far
+    cv::Mat_<float> hit;//stores the number of times each cell has been hit by a ray
     int imageNum;
 
     //Cost(){};
@@ -58,15 +58,11 @@ public:
 
 
 private:
-    cv::Mat_<float> dataContainer; //stores the actual data for data*, used for auto allocation behavior
-    cv::Mat_<float> hitContainer; //stores the actual data for hit*, used for auto allocation behavior
-
-
     //Initializer functions
     void init(){
         depthStep=((depth.back()-depth[0])/layers);
-        data=(float*)dataContainer.data;
-        hit=(float*)hitContainer.data;
+        lo = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows,baseImage.cols);
+        hi = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows,baseImage.cols);
         imageNum=0;
         QDruncount=0;
         Aruncount=0;

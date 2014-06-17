@@ -54,7 +54,7 @@ void Cost::initOptimization(){//must be thread safe in allocations(i.e. don't do
     cacheGValues();
     cv::Mat loInd(rows,cols,CV_32SC1);
     cv::Mat loVal(rows,cols,CV_32FC1);
-    minv(data,loInd,loVal);
+    minv(data.ptr<float>(0),loInd,loVal);
     loInd.convertTo(_a,CV_32FC1);
 //     _a=_a*depthStep;
     _a.copyTo(_d);
@@ -430,7 +430,7 @@ void Cost::optimizeA(){
     pfShow("d",_d);
     pfShow("a",_a);
     for(st point=0;point<w*h;point++){
-        a[point]=aBasic(data+point*l,l,ds,d[point]);
+        a[point]=aBasic(data.ptr<float>(0)+point*l,l,ds,d[point]);
     }
 }
 

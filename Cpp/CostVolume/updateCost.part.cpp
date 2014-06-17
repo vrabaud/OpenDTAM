@@ -38,8 +38,8 @@ void Cost::updateCostL1(const cv::Mat& image,
         size_t lstep=layers;
         float* pdata=(float*)(plane.data);
         float* idata=(float*)(baseImage.data);
-        float* cdata=data+n;
-        float* hdata=hit+n;
+        float* cdata=data[0]+n;
+        float* hdata=hit[0]+n;
         float* ldata=(float*)(newLo.data);
 
         
@@ -108,8 +108,8 @@ void Cost::updateCostL2(const cv::Mat& image,
             size_t lstep=layers;
             float* pdata=(float*)(plane.data);
             float* idata=(float*)(baseImage.data);
-            float* cdata=data+n;
-            float* hdata=hit+n;
+            float* cdata=data[0]+n;
+            float* hdata=hit[0]+n;
             float* ldata=(float*)(newLo.data);
             
             float* xdata=(float*)(newHi.data);
@@ -164,8 +164,8 @@ void Cost::updateCostL2(const cv::Mat& image,
             size_t lstep=layers;
             float* pdata=(float*)(plane.data);
             float* idata=(float*)(baseImage.data);
-            float* cdata=((float*)data)+n;
-            float* hdata=((float*)hit)+n;
+            float* cdata=data[0]+n;
+            float* hdata=hit[0]+n;
             char*  mdata=(char*)(mask.data);
             
             //size_t moff=0;

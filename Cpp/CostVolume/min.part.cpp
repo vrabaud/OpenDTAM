@@ -67,18 +67,18 @@ void Cost::minmax(){
     int r=rows;
     int c=cols;
     int l=layers;
-    lo.create(rows,cols,CV_32FC1);
-    hi.create(rows,cols,CV_32FC1);
+    lo.create(rows,cols);
+    hi.create(rows,cols);
     float* maxValue=(float*)(hi.data);
     float* minValue=(float*)(lo.data);
     
     for(int i=0,id=0;i<r*c;i++){//i is offset in 2d, id is offset in 3d
         //first element is max so far
-        float mhiv=data[id];
-        float mlov=data[id];
+        float mhiv=data(id);
+        float mlov=data(id);
         id++;
         for (int il=1;il<l;il++,id++){//il is layer index
-            float v=data[id];
+            float v=data(id);
             if(mhiv<v){
                 mhiv=v;
             }
