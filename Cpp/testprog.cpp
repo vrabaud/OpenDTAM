@@ -59,7 +59,7 @@ int App_main( int argc, char** argv )
     int imageNum=0;
     char filename[500];
     Mat cameraMatrix,R,T;
-    convertAhandaPovRayToStandard("/local_store/Dropbox/Research/DTAM GSoC/OpenDTAM/Trajectory_30_seconds",
+    convertAhandaPovRayToStandard("../../Trajectory_30_seconds",
                                   imageNum,
                                   cameraMatrix,
                                   R,
@@ -68,7 +68,7 @@ int App_main( int argc, char** argv )
 //     cout<<"cameraMatrix: "<<cameraMatrix<<"\n";
 //     cout<< "R : "<<R<<"\n";
 //     cout<< "T : "<<T<<"\n";
-    sprintf(filename,"/local_store/Dropbox/Research/DTAM GSoC/OpenDTAM/Trajectory_30_seconds/scene_%03d.png",imageNum);
+    sprintf(filename,"../../Trajectory_30_seconds/scene_%03d.png",imageNum);
     Mat image;
     
 
@@ -88,8 +88,8 @@ int App_main( int argc, char** argv )
 
     vector<Mat> images,Rs,Ts;
     for(int i=0;i<=50;i++){
-        sprintf(filename,"/local_store/Dropbox/Research/DTAM GSoC/OpenDTAM/Trajectory_30_seconds/scene_%03d.png",i);
-        convertAhandaPovRayToStandard("/local_store/Dropbox/Research/DTAM GSoC/OpenDTAM/Trajectory_30_seconds",
+        sprintf(filename,"../../Trajectory_30_seconds/scene_%03d.png",i);
+        convertAhandaPovRayToStandard("../../Trajectory_30_seconds",
                                       i,
                                       cameraMatrix,
                                       R,
@@ -211,11 +211,12 @@ int App_main( int argc, char** argv )
     //     waitKey(0);                                          // Wait for a keystroke in the window
     usleep(10);
         }
+return 0;
     }
-    while(1){
+/*    while(1){
         usleep(1000);
     }
-
+*/
     return 0;
 }
 
