@@ -30,7 +30,7 @@ public:
     float depthStep;
     cv::Matx33d cameraMatrix;
     cv::Matx44d pose;//the affine transform representing the world -> camera frame transformation
-    cv::Mat_<float> data;// stores the [rows][cols][layers] array of sum of costs so far
+    cv::Mat_<float> costs;// stores the [rows][cols][layers] array of sum of costs so far
     cv::Mat_<float> hit;//stores the number of times each cell has been hit by a ray
     int imageNum;
 

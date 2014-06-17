@@ -17,8 +17,7 @@ depth(generateDepths(layers)),
 cameraMatrix(cameraMatrix),
 pose(convertPose(R,Tr))
 {
-    data = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*layers,1);
-    std::cout << "coin1 " << int(data.empty()) << std::endl;
+    costs = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*layers,1);
     hit = cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*layers,1);
 
     init();
@@ -34,8 +33,7 @@ depth(generateDepths(layers)),
 cameraMatrix(cameraMatrix),
 pose(cameraPose)
 {
-    data = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*layers,1);
-    std::cout << "coin2 " << int(data.empty()) << std::endl;
+    costs = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*layers,1);
     hit = cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*layers,1);
 
     init();
@@ -51,8 +49,7 @@ layers(depth.size()),
 cameraMatrix(cameraMatrix),
 pose(convertPose(R,Tr))
 {
-    data = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*depth.size(),1);
-    std::cout << "coin3 " << int(data.empty()) << std::endl;
+    costs = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*depth.size(),1);
     hit = cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*depth.size(),1);
 
     init();
@@ -68,8 +65,7 @@ depth(depth),
 cameraMatrix(cameraMatrix),
 pose(cameraPose)
 {
-    data = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*depth.size(),1);
-    std::cout << "coin4 " << int(data.empty()) << std::endl;
+    costs = COST_CPP_DATA_MIN*cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*depth.size(),1);
     hit = cv::Mat_<float>::ones(baseImage.rows*baseImage.cols*depth.size(),1);
 
     init();

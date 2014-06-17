@@ -74,11 +74,11 @@ void Cost::minmax(){
     
     for(int i=0,id=0;i<r*c;i++){//i is offset in 2d, id is offset in 3d
         //first element is max so far
-        float mhiv=data(id);
-        float mlov=data(id);
+        float mhiv=costs(id);
+        float mlov=costs(id);
         id++;
         for (int il=1;il<l;il++,id++){//il is layer index
-            float v=data(id);
+            float v=costs(id);
             if(mhiv<v){
                 mhiv=v;
             }
