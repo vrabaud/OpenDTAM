@@ -120,7 +120,7 @@ private:
         //Q update
     public: void optimizeQD();private://NOT PUBLIC!!! JUST NEED TO ACCESS FROM A STATIC CALL. DO NOT USE!
         //A update
-    float aBasic(float* data,float l,float ds,float d,float& value);
+    float aBasic(const cv::Mat_<float> &res, int step);
     public: void optimizeA();private://NOT PUBLIC!!! JUST NEED TO ACCESS FROM A STATIC CALL. DO NOT USE!
     
     

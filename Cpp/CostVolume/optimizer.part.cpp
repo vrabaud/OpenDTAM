@@ -172,46 +172,36 @@ void Cost::cacheGValues(){
     return (A-C)/(A-2*B+C)*.5+float(mi);
 }*/
 
-static inline float afunc(float* data,float theta,float d,float ds,int a,float lambda){
-    return 1.0/(2.0*theta)*ds*ds*(d-a)*(d-a) + data[a]*lambda;//Literal implementation of Eq.14, note the datastep^2 factor to scale correctly
-//     return 1.0/(2.0*theta)*(d-a)*(d-a) + data[a]*lambda;//forget the ds^2 factor for better numerical behavior(sometimes)
-//     return std::abs(1.0/(2.0*theta)*ds*ds*(d-a)) + data[a]*lambda;//L1 Version
-}
+inline float Cost::aBasic(const cv::Mat_<float> &res, int step){
+    int l;
+    if (res.cols == 1)
+      l = res.rows;
+    else
+      l = res.cols;
 
-inline float Cost::aBasic(float* data,float l,float ds,float d,float& value){
-    int mi=0;
-    float vlast,vnext,v,A,B,C;
-    
-    float mv=afunc(data,theta,d,ds,0,lambda); 
-    v=mv;
-    vnext=afunc(data,theta,d,ds,1,lambda);
-    for(int a=2;a<l;a++){
-        vlast=v;
-        v=vnext;
-        vnext=afunc(data,theta,d,ds,a,lambda);
-        if(v<mv){
-            A=vlast;
-            C=vnext;
-            mv=v;
-            mi=a-1;
+    const float *v = res[0];
+    float mv=res(0);
+    int mi = 0;
+    for(int a=1;a<l;++a, v+=step){
+        if(*v<mv){
+            mv=*v;
+            mi=a;
         }
     }
-    
-    if(vnext<mv){//last was best
-        value=vnext;
+
+    if(mi == l-1){//last was best
         return (float)l-1;
     }
-    
-    
+
     if(mi==0){//first was best
-        value=mv;
         return (float)mi;
     }
-    
-    B=mv*(1.0-1.0e-8);//avoid divide by zero, since B is already <= others, make < others
+
+    float A = res(mi-1), C = res(mi+1);
+
+    float B=mv*(1.0-1.0e-8);//avoid divide by zero, since B is already <= others, make < others
     float delt=(A-C)/(A-2*B+C)*.5;
     //value=A/2*(delt)*(delt-1)-B*(delt+1)*(delt-1)+C/2*(delt+1)*(delt);
-    value=B-(A-C)*delt/4;
     //B-(A-C)*(A-C)/(A-2*B+C)/8
    // B+(C-A)*delt/2+(A-2*B+C)*delt*delt/2
     
@@ -219,7 +209,6 @@ inline float Cost::aBasic(float* data,float l,float ds,float d,float& value){
     //assert(fabs(delt)<=.5);
     return delt+float(mi);
 }
-
 
 // //
 // static inline float aUpdate(float* data,int loind, int hiind, float d, float k, float range){
@@ -455,10 +444,25 @@ void Cost::optimizeA(){
 
     pfShow("d",_d,0,Vec2d(0,layers));
     pfShow("a",_a,0,Vec2d(0,layers));
-    // a update
-    for(st point=0;point<w*h;point++){
-        float blank;
-        a[point]=aBasic(data+point*l,l,ds,d[point],blank);
+    // For each point, compute Eq 14.
+    //1.0/(2.0*theta)*ds*ds*(d-a)*(d-a) + data[a]*lambda;//Literal implementation of Eq.14, note the datastep^2 factor to scale correctly
+
+
+    //(float* data,float l,float ds,float d)
+    //afunc(data,theta,d,ds,a,lambda)
+    cv::Mat_<float> d_mat = cv::Mat_<float>(1, w*h, d);
+
+    float A = (1.0/(2.0*theta)*ds*ds);
+    cv::Mat_<float> d_minus_a_sqr(l, w*h);
+    for(size_t a = 0; a < l; ++a) {
+        cv::subtract(d_mat, a, d_minus_a_sqr.row(a));
+    }
+    cv::pow(d_minus_a_sqr, 2, d_minus_a_sqr);
+    cv::Mat_<float> res;
+    cv::addWeighted(d_minus_a_sqr, A, cv::Mat_<float>(w*h, l, data).t(), lambda, 0, res);
+    
+    for(size_t point = 0; point < w*h; ++point) {
+        a[point] = aBasic(res.col(point), res.cols);
     }
     
 
@@ -476,4 +480,3 @@ void Cost::optimizeA(){
 //     cout<<"Elastic Energy: "<<Ee<<endl;
 //     cout<<"Total Energy: "<<Ed+Ee<<endl;
 }
-
