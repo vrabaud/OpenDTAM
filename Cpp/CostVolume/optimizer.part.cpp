@@ -255,15 +255,18 @@ static void* Cost_optimizeQD(void* object){
     pthread_setname_np(pthread_self(),"QDthread");
     Cost* cost = (Cost*)object;
     set_affinity(2);
-    while(cost->running){
+    cost->running_qd=true;
+    while(cost->running_a){
         cost->optimizeQD();
     }
+    cost->running_qd=false;
 }
 static void* Cost_optimizeA(void* object){
     pthread_setname_np(pthread_self(),"Athread");
     Cost* cost = (Cost*)object;
     set_affinity(3);
-    while(cost->running){
+    cost->running_a=true;
+    while(cost->running_a){
         cost->optimizeA();
     }
 }
@@ -275,8 +278,10 @@ static void* Cost_optimizeA(void* object){
 
 
 void Cost::optimize(){
-    if(!running){
-        running=true;
+    if(!running_a){
+        // Wait for QD to be done
+        while(running_qd)
+          usleep(100);
         launch_optimzer_threads(this);
     }else{
         cout<<"Already running optimizer!"<<"\n";
@@ -428,7 +433,7 @@ void Cost::optimizeA(){
         thetaStep=.97;
     }
     if (theta<thetaMin){//done optimizing!
-        running=false;
+        running_a=false;
         gpause();
 //         initOptimization();
         stableDepth=_d.clone();//always choose more regularized version
